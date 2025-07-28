@@ -11,6 +11,9 @@ using Content.Shared.StationRecords;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
+using Content.Shared.Roles.Jobs;
+using Robust.Shared.Map;
+using System.Numerics;
 
 namespace Content.Server.Delivery;
 
@@ -30,6 +33,7 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
     [Dependency] private readonly SharedContainerSystem _container = default!;
     [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly IPrototypeManager _protoMan = default!;
+    [Dependency] private readonly SharedJobSystem _jobs = default!;
 
     /// <summary>
     /// Default reason to use if the penalization is triggered
@@ -47,7 +51,6 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
 
     private void OnMapInit(Entity<DeliveryComponent> ent, ref MapInitEvent args)
     {
-        _container.EnsureContainer<Container>(ent, ent.Comp.Container);
 
         if (_station.GetStationInMap(Transform(ent).MapID) is not { } stationId)
             return;
@@ -62,6 +65,16 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
         _appearance.SetData(ent, DeliveryVisuals.JobIcon, entry.JobIcon);
 
         _label.Label(ent, ent.Comp.RecipientName);
+
+        var container = _container.EnsureContainer<Container>(ent, ent.Comp.Container);
+        var spawns = _entityTable.GetSpawns(ent.Comp.Table);
+        var xform = Transform(ent);
+        var coords = new EntityCoordinates(ent, Vector2.Zero);
+        foreach (var proto in spawns)
+        {
+            var spawn = Spawn(proto, coords);
+            _container.Insert(spawn, container, containerXform: xform);
+        }
 
         if (TryComp<FingerprintReaderComponent>(ent, out var reader) && entry.Fingerprint != null)
         {
@@ -120,7 +133,7 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
         var calculatedPenalty = (int)(ent.Comp.BaseSpesoPenalty * multiplier);
 
         // Prevents cargo from going into negatives
-        if (calculatedPenalty > penaltyAccountBalance )
+        if (calculatedPenalty > penaltyAccountBalance)
             calculatedPenalty = Math.Max(0, penaltyAccountBalance);
 
         _cargo.UpdateBankAccount(

@@ -1,4 +1,5 @@
 using Content.Shared.Cargo.Prototypes;
+using Content.Shared.EntityTable.EntitySelectors;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -12,6 +13,14 @@ namespace Content.Shared.Delivery;
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState(fieldDeltas: true)]
 public sealed partial class DeliveryComponent : Component
 {
+
+    /// <summary>
+    /// The entity table to select deliveries from.
+    /// </summary>
+    [DataField(required: true)]
+    public EntityTableSelector Table;
+
+
     /// <summary>
     /// Whether this delivery has been opened before.
     /// </summary>

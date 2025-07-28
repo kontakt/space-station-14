@@ -96,14 +96,13 @@
   - type: Delivery
     baseSpesoReward: 1000
     baseSpesoPenalty: 250 # So low due to dept economy splitting all the earnings, but not splitting the penalty.
+    table: !type:NestedSelector
+      tableId: PackageDeliveryRewards
   - type: Speech
     speechVerb: Robotic
   - type: SimpleToolUsage
     doAfter: 6
-  - type: EntityTableContainerFill
-    containers:
-      delivery: !type:NestedSelector
-        tableId: PackageDeliveryRewards
+
 
 - type: entity
   parent: BaseDelivery
@@ -145,12 +144,10 @@
   - type: Delivery
     baseSpesoReward: 500
     baseSpesoPenalty: 125 # So low due to dept economy splitting all the earnings, but not splitting the penalty.
+    table: !type:NestedSelector
+      tableId: LetterDeliveryRewards
   - type: Speech
     speechVerb: Robotic
-  - type: EntityTableContainerFill
-    containers:
-      delivery: !type:NestedSelector
-        tableId: LetterDeliveryRewards
 
 
 # Modifier Tables
