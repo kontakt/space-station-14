@@ -35,7 +35,7 @@ public sealed partial class DeliverySystem
 
         var coords = Transform(ent).Coordinates;
 
-        for (int i = 0; i < ent.Comp.ContainedDeliveryAmount; i++)
+        for (var i = 0; i < ent.Comp.ContainedDeliveryAmount; i++)
         {
             var spawns = _entityTable.GetSpawns(ent.Comp.Table);
 
