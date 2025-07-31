@@ -1,3 +1,4 @@
+using Content.Shared.EntityTable.EntitySelectors;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.Delivery;
@@ -11,6 +12,13 @@ namespace Content.Shared.Delivery;
 [Access(typeof(DeliveryModifierSystem))]
 public sealed partial class DeliveryFragileComponent : Component
 {
+
+    /// <summary>
+    /// The entity table to select damaged contents from.
+    /// </summary>
+    [DataField(required: true)]
+    public EntityTableSelector Table;
+
     /// <summary>
     /// Multiplier to use when the delivery is intact.
     /// </summary>

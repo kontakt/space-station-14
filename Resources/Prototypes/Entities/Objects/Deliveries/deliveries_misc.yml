@@ -1,0 +1,18 @@
+
+# Broken bits for a broken delivery.
+- type: entityTable
+  id: BrokenFragileDelivery
+  table: !type:GroupSelector
+    children:
+    - id: ShardGlass
+      weight: 0.5
+    - id: ShardGlassReinforced
+      weight: 0.1
+    - id: ShardGlassPlasma
+      weight: 0.05
+    - id: ShardGlassUranium
+      weight: 0.05
+    - !type:NestedSelector
+      weight: 0.3
+      tableId: SalvageScrapLowValue
+

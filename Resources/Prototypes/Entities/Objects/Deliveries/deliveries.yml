@@ -175,6 +175,8 @@
   categories: [ HideSpawnMenu ]
   components:
   - type: DeliveryFragile
+    table: !type:NestedSelector
+      tableId: BrokenFragileDelivery
   - type: Damageable
     damageContainer: Inorganic
   - type: DamageOnHighSpeedImpact

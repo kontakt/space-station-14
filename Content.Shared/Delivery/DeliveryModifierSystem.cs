@@ -1,9 +1,12 @@
+using System.Linq;
 using Content.Shared.Audio;
 using Content.Shared.Destructible;
+using Content.Shared.EntityTable;
 using Content.Shared.Examine;
 using Content.Shared.Explosion.EntitySystems;
 using Content.Shared.NameModifier.EntitySystems;
 using JetBrains.Annotations;
+using Robust.Shared.Containers;
 using Robust.Shared.Network;
 using Robust.Shared.Random;
 using Robust.Shared.Serialization;
@@ -16,10 +19,12 @@ namespace Content.Shared.Delivery;
 /// </summary>
 public sealed partial class DeliveryModifierSystem : EntitySystem
 {
+    [Dependency] private readonly EntityTableSystem _entityTable = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly NameModifierSystem _nameModifier = default!;
+    [Dependency] private readonly SharedContainerSystem _container = default!;
     [Dependency] private readonly SharedDeliverySystem _delivery = default!;
     [Dependency] private readonly SharedExplosionSystem _explosion = default!;
     [Dependency] private readonly SharedAmbientSoundSystem _ambientSound = default!;
@@ -112,6 +117,15 @@ public sealed partial class DeliveryModifierSystem : EntitySystem
     {
         ent.Comp.Broken = true;
         _delivery.UpdateBrokenVisuals(ent, true);
+        var delivery_container = _container.GetAllContainers(ent).First(); // Assuming only one container in a delivery
+        _container.CleanContainer(delivery_container);
+
+        var spawns = _entityTable.GetSpawns(ent.Comp.Table);
+        foreach (var proto in spawns)
+        {
+            TrySpawnInContainer(proto, ent, delivery_container.ID, out var _);
+        }
+
         Dirty(ent);
     }
 
