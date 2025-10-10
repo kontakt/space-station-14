@@ -1,15 +1,17 @@
 using Content.Server.Administration.Logs;
 using Content.Server.Atmos.Components;
+using Content.Server.Damage.Components;
 using Content.Server.Stunnable;
 using Content.Server.Temperature.Components;
 using Content.Server.Temperature.Systems;
-using Content.Server.Damage.Components;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Alert;
 using Content.Shared.Atmos;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Damage;
 using Content.Shared.Database;
+using Content.Shared.FixedPoint;
+using Content.Shared.Hands;
 using Content.Shared.IgnitionSource;
 using Content.Shared.Interaction;
 using Content.Shared.Inventory;
@@ -22,13 +24,13 @@ using Content.Shared.Throwing;
 using Content.Shared.Timing;
 using Content.Shared.Toggleable;
 using Content.Shared.Weapons.Melee.Events;
-using Content.Shared.FixedPoint;
-using Content.Shared.Hands;
 using Robust.Server.Audio;
+using Robust.Server.GameObjects;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Events;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Random;
+using Robust.Shared.Toolshed.Commands.Values;
 
 namespace Content.Server.Atmos.EntitySystems
 {
@@ -46,6 +48,7 @@ namespace Content.Server.Atmos.EntitySystems
         [Dependency] private readonly InventorySystem _inventory = default!;
         [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
         [Dependency] private readonly SharedPopupSystem _popup = default!;
+        [Dependency] private readonly TransformSystem _transformSystem = default!;
         [Dependency] private readonly UseDelaySystem _useDelay = default!;
         [Dependency] private readonly AudioSystem _audio = default!;
         [Dependency] private readonly IRobustRandom _random = default!;
@@ -117,14 +120,24 @@ namespace Content.Server.Atmos.EntitySystems
             if (!args.OtherFixture.Hard || component.Count == 0)
                 return;
 
-            var otherEnt = args.OtherEntity;
-
-            if (!TryComp(otherEnt, out FlammableComponent? flammable))
-                return;
-
             //Only ignite when the colliding fixture is projectile or ignition.
             if (args.OurFixtureId != component.FixtureId && args.OurFixtureId != SharedProjectileSystem.ProjectileFixture)
             {
+                return;
+            }
+
+            var otherEnt = args.OtherEntity;
+
+            if (!TryComp(otherEnt, out FlammableComponent? flammable))
+            {
+                // If other entity is not flammable, spark the atmos tile
+                var ourEnt = args.OurEntity;
+                var transform = Transform(ourEnt);
+                if (transform.GridUid is { } gridUid)
+                {
+                    var position = _transformSystem.GetGridOrMapTilePosition(ourEnt, transform);
+                    _atmosphereSystem.HotspotExpose(gridUid, position, 1300f, 1f, null, true);
+                }
                 return;
             }
 
