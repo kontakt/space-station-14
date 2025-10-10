@@ -131,11 +131,9 @@ namespace Content.Server.Atmos.EntitySystems
             if (!TryComp(otherEnt, out FlammableComponent? flammable))
             {
                 // If other entity is not flammable, spark the atmos tile
-                var ourEnt = args.OurEntity;
-                var transform = Transform(ourEnt);
-                if (transform.GridUid is { } gridUid)
+                if (Transform(args.OurEntity).GridUid is { } gridUid)
                 {
-                    var position = _transformSystem.GetGridOrMapTilePosition(ourEnt, transform);
+                    var position = _transformSystem.GetGridOrMapTilePosition(args.OurEntity);
                     _atmosphereSystem.HotspotExpose(gridUid, position, 1300f, 1f, null, true);
                 }
                 return;
