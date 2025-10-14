@@ -1,0 +1,16 @@
+- type: entityTable
+  id: SecurityUncommonLetter
+  table: !type:GroupSelector
+    children:
+    - id: CartridgePistol
+      amount: !type:RangeNumberSelector
+        range: 1, 10
+    -id: ToyFigurineSecurity
+    -id: ToyFigurineHeadOfSecurity
+
+- type: entityTable
+  id: SecurityRareLetter
+  table: !type:GroupSelector
+    children:
+    - id: MagazinePistolUranium
+    - id: MagazinePistolIncendiary

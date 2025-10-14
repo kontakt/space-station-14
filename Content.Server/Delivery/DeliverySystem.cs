@@ -12,8 +12,7 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 using Content.Shared.Roles.Jobs;
-using Robust.Shared.Map;
-using System.Numerics;
+using Content.Shared.EntityTable;
 
 namespace Content.Server.Delivery;
 
@@ -55,30 +54,38 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
         if (_station.GetStationInMap(Transform(ent).MapID) is not { } stationId)
             return;
 
-        if (!_records.TryGetRandomRecord<GeneralStationRecord>(stationId, out var entry))
+        if (!_records.TryGetRandomRecord<GeneralStationRecord>(stationId, out var stationRecord))
             return;
 
-        ent.Comp.RecipientName = entry.Name;
-        ent.Comp.RecipientJobTitle = entry.JobTitle;
+        if (!_jobs.TryGetAllDepartments(stationRecord.JobPrototype, out var departmentProtoList))
+            return;
+
+        ent.Comp.RecipientName = stationRecord.Name;
+        ent.Comp.RecipientJobTitle = stationRecord.JobTitle;
         ent.Comp.RecipientStation = stationId;
 
-        _appearance.SetData(ent, DeliveryVisuals.JobIcon, entry.JobIcon);
+        // Context used by conditionals on delivery tables
+        var contextPayload = new Dictionary<string, object>()
+        {
+            {"departments", departmentProtoList},
+            {"job", stationRecord.JobPrototype}
+        };
+        var context = new EntityTableContext(contextPayload);
+
+        _appearance.SetData(ent, DeliveryVisuals.JobIcon, stationRecord.JobIcon);
 
         _label.Label(ent, ent.Comp.RecipientName);
 
-        var container = _container.EnsureContainer<Container>(ent, ent.Comp.Container);
-        var spawns = _entityTable.GetSpawns(ent.Comp.Table);
-        var xform = Transform(ent);
-        var coords = new EntityCoordinates(ent, Vector2.Zero);
+        _container.EnsureContainer<Container>(ent, ent.Comp.Container);
+        var spawns = _entityTable.GetSpawns(ent.Comp.Table, ctx: context);
         foreach (var proto in spawns)
         {
-            var spawn = Spawn(proto, coords);
-            _container.Insert(spawn, container, containerXform: xform);
+            TrySpawnInContainer(proto, ent, ent.Comp.Container, out var _);
         }
 
-        if (TryComp<FingerprintReaderComponent>(ent, out var reader) && entry.Fingerprint != null)
+        if (TryComp<FingerprintReaderComponent>(ent, out var reader) && stationRecord.Fingerprint != null)
         {
-            _fingerprintReader.AddAllowedFingerprint((ent.Owner, reader), entry.Fingerprint);
+            _fingerprintReader.AddAllowedFingerprint((ent.Owner, reader), stationRecord.Fingerprint);
         }
 
         Dirty(ent);

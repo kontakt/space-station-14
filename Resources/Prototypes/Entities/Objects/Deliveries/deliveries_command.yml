@@ -1,0 +1,17 @@
+- type: entityTable
+  id: CommandCommonLetter
+  table: !type:AllSelector
+    children:
+    - id: SpaceCash1000000
+
+- type: entityTable
+  id: CommandUncommonLetter
+  table: !type:AllSelector
+    children:
+    - id: SpaceCash1000000
+
+- type: entityTable
+  id: CommandRareLetter
+  table: !type:AllSelector
+    children:
+    - id: SpaceCash1000000

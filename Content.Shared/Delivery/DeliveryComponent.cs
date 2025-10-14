@@ -15,7 +15,7 @@ public sealed partial class DeliveryComponent : Component
 {
 
     /// <summary>
-    /// The entity table to select deliveries from.
+    /// The entity table to select delivery contents from.
     /// </summary>
     [DataField(required: true)]
     public EntityTableSelector Table;

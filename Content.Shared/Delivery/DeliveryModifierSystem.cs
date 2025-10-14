@@ -117,6 +117,7 @@ public sealed partial class DeliveryModifierSystem : EntitySystem
     {
         ent.Comp.Broken = true;
         _delivery.UpdateBrokenVisuals(ent, true);
+
         var delivery_container = _container.GetAllContainers(ent).First(); // Assuming only one container in a delivery
         _container.CleanContainer(delivery_container);
 
@@ -270,7 +271,7 @@ public sealed partial class DeliveryModifierSystem : EntitySystem
 }
 
 /// <summary>
-/// Gets raised on a priority delivery when it's timer expires.
+/// Gets raised on a priority delivery when its timer expires.
 /// </summary>
 [Serializable, NetSerializable]
 public readonly record struct DeliveryPriorityExpiredEvent;
