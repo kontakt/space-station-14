@@ -28,6 +28,7 @@ public sealed class ParticleOnEventSystem : EntitySystem
 
         SubscribeLocalEvent<ParticleOnUseComponent, UseInHandEvent>(OnUse);
         SubscribeLocalEvent<ParticleOnUseInWorldComponent, AfterInteractEvent>(OnUseInWorld);
+        SubscribeLocalEvent<ParticleOnUseInWorldOtherComponent, AfterInteractEvent>(OnUseInWorldOther);
         SubscribeLocalEvent<ParticleOnMeleeAttackComponent, MeleeHitEvent>(OnMeleeAttack);
         SubscribeLocalEvent<ParticleOnMeleeAttackOtherComponent, MeleeHitEvent>(OnMeleeAttackOther);
         SubscribeLocalEvent<ParticleOnMeleeHitComponent, AttackedEvent>(OnMeleeHit);
@@ -53,6 +54,12 @@ public sealed class ParticleOnEventSystem : EntitySystem
     {
         if (args.CanReach)
             Spawn(ent.Comp, ent.Owner);
+    }
+
+    private void OnUseInWorldOther(Entity<ParticleOnUseInWorldOtherComponent> ent, ref AfterInteractEvent args)
+    {
+        if (args.CanReach && args.Target is { } target)
+            Spawn(ent.Comp, target);
     }
 
     private void OnMeleeAttack(Entity<ParticleOnMeleeAttackComponent> ent, ref MeleeHitEvent args)

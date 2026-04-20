@@ -23,9 +23,15 @@ public sealed partial class ParticleOnUseComponent : ParticleOnEventBase
 {
 }
 
-/// <summary>Spawns a particle effect when this entity is used on a target in the world.</summary>
+/// <summary>Spawns a particle effect on this entity when it is used on a target in the world.</summary>
 [RegisterComponent]
 public sealed partial class ParticleOnUseInWorldComponent : ParticleOnEventBase
+{
+}
+
+/// <summary>Spawns a particle effect on the <b>target</b> when this entity is used on it in the world.</summary>
+[RegisterComponent]
+public sealed partial class ParticleOnUseInWorldOtherComponent : ParticleOnEventBase
 {
 }
 
