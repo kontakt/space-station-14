@@ -48,7 +48,6 @@ ui-options-quality-label = Quality
 ui-options-misc-label = Misc
 ui-options-interface-label = Interface
 
-
 ui-options-auto-fill-highlights = Automatically set the highlights list based on your character's name and job
 ui-options-highlights-color = Highlights color:
 ui-options-highlights-color-example = This is highlighted text.
@@ -105,6 +104,11 @@ ui-options-ambient-occlusion = Show Ambient Occlusion
 ui-options-fps-counter = Show FPS counter
 ui-options-vp-width = Viewport width:
 ui-options-hud-layout = HUD layout:
+ui-options-particles-label = Particle Quality:
+ui-options-particles-off = Off
+ui-options-particles-low = Low
+ui-options-particles-medium = Medium
+ui-options-particles-high = High
 
 ## Controls menu
 
@@ -413,10 +417,3 @@ ui-options-admin-enable-overlay-starting-job = Show starting job
 ui-options-admin-overlay-merge-distance = Stack merge distance
 ui-options-admin-overlay-ghost-fade-distance = Ghost overlay fade range from mouse
 ui-options-admin-overlay-ghost-hide-distance = Ghost overlay hide range from mouse
-
-## Particles menu
-
-ui-options-particles-off = Off
-ui-options-particles-low = Low
-ui-options-particles-medium = Medium
-ui-options-particles-high = High
