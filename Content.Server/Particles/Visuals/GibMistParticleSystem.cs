@@ -1,11 +1,11 @@
-using Content.Shared.Particles;
 using Content.Shared.Body.Components;
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Gibbing;
+using Content.Shared.Particles.Visuals;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server.Particles;
+namespace Content.Server.Particles.Visuals;
 
 /// <summary>
 /// Reads the blood color of a gibbed entity and forwards it to nearby clients via

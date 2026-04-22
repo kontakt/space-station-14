@@ -1,7 +1,7 @@
 using Robust.Shared.Map;
 using Robust.Shared.Serialization;
 
-namespace Content.Shared.Particles;
+namespace Content.Shared.Particles.Visuals;
 
 /// <summary>
 /// Sent from the server to nearby clients when an entity is gibbed,

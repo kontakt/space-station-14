@@ -1,6 +1,6 @@
 using System.Numerics;
-using Content.Shared.Particles;
 using Content.Shared.CCVar;
+using Content.Shared.Particles;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;

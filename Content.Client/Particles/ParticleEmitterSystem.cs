@@ -1,5 +1,4 @@
 using Content.Shared.Particles;
-using Robust.Shared.Map;
 
 namespace Content.Client.Particles;
 

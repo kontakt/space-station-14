@@ -1,4 +1,5 @@
 using Content.Shared.Particles;
+using Content.Shared.Particles.Visuals;
 using Robust.Shared.Prototypes;
 
 namespace Content.Client.Particles.Visuals;
