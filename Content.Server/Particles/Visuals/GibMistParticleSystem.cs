@@ -5,7 +5,7 @@ using Content.Shared.Gibbing;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server._Starfall.Particles;
+namespace Content.Server.Particles;
 
 /// <summary>
 /// Reads the blood color of a gibbed entity and forwards it to nearby clients via

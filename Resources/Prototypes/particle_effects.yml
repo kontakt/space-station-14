@@ -1,7 +1,7 @@
 - type: particleEffect
-  id: SfWeldingSparks
+  id: WeldingSparks
   sprite:
-    sprite: _Starfall/Particles/generic.rsi
+    sprite: Particles/generic.rsi
     state: curl
   shader: unshaded
   colorOverLifetime:
@@ -32,9 +32,9 @@
     radius: 0.1
 
 - type: particleEffect
-  id: SfGibMist
+  id: GibMist
   sprite:
-    sprite: _Starfall/Particles/generic.rsi
+    sprite: Particles/generic.rsi
     state: soft_dot_big
   startColor: "#FFFFFFFF" #Gets changed by GibParticleSystem's ColorOverride to match the victim's blood color.
   endColor: "#FFFFFF00"
@@ -78,9 +78,9 @@
     radius: 0.2
 
 - type: particleEffect
-  id: SfWeldingBurst
+  id: WeldingBurst
   sprite:
-    sprite: _Starfall/Particles/generic.rsi
+    sprite: Particles/generic.rsi
     state: curl
   shader: unshaded
   colorOverLifetime:
@@ -110,7 +110,7 @@
     radius: 0.12
 
 - type: particleEffect
-  id: SfSmoke
+  id: Smoke
   sprite:
     sprite: Effects/chemsmoke.rsi
     state: chemsmoke
@@ -136,9 +136,9 @@
   rotationSpeedVariance: 25
 
 - type: particleEffect
-  id: SfFireContinuous
+  id: FireContinuous
   sprite:
-    sprite: _Starfall/Particles/generic.rsi
+    sprite: Particles/generic.rsi
     state: dot
   shader: unshaded
   colorOverLifetime:
@@ -177,7 +177,7 @@
     radius: 0.3
 
 - type: particleEffect
-  id: SfFireSmoke
+  id: FireSmoke
   sprite:
     sprite: Effects/chemsmoke.rsi
     state: chemsmoke
@@ -220,7 +220,7 @@
     radius: 0.25
 
 - type: particleEffect
-  id: SfFireEmbers
+  id: FireEmbers
   sprite:
     sprite: Effects/fire.rsi
     state: fire
@@ -249,7 +249,7 @@
   emitAngle: 0
 
 - type: particleEffect
-  id: SfFootstepDust
+  id: FootstepDust
   sprite:
     sprite: Effects/chemsmoke.rsi
     state: chemsmoke

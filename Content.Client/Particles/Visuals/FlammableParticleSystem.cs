@@ -15,8 +15,8 @@ public sealed class FlammableParticleSystem : EntitySystem
     [Dependency] private readonly AppearanceSystem _appearance = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
 
-    private static readonly ProtoId<ParticleEffectPrototype> FireEffect  = "SfFireContinuous";
-    private static readonly ProtoId<ParticleEffectPrototype> SmokeEffect = "SfFireSmoke";
+    private static readonly ProtoId<ParticleEffectPrototype> FireEffect  = "FireContinuous";
+    private static readonly ProtoId<ParticleEffectPrototype> SmokeEffect = "FireSmoke";
 
     private const float MaxStacks = 10f;
 
