@@ -1,10 +1,10 @@
-using Content.Shared._Starfall.Particles;
+using Content.Shared.Particles;
 using Content.Shared.Atmos;
 using Content.Shared.Atmos.Components;
 using Robust.Client.GameObjects;
 using Robust.Shared.Prototypes;
 
-namespace Content.Client._Starfall.Particles;
+namespace Content.Client.Particles;
 
 /// <summary>
 /// Particles when entities are on fire.

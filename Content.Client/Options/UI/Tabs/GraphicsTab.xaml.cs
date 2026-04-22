@@ -23,7 +23,7 @@ public sealed partial class GraphicsTab : Control
         Control.AddOptionCheckBox(CCVars.AmbientOcclusion, AmbientOcclusionCheckBox);
         Control.AddOption(new OptionFullscreen(Control, _cfg, FullscreenCheckBox));
         Control.AddOption(new OptionLightingQuality(Control, _cfg, DropDownLightingQuality));
-        Control.AddOption(new OptionParticleQuality(Control, _cfg, DropDownParticleQuality)); // _Starfall: Particle quality.
+        Control.AddOption(new OptionParticleQuality(Control, _cfg, DropDownParticleQuality));
 
         Control.AddOptionDropDown(
             CVars.DisplayUIScale,
@@ -241,7 +241,6 @@ public sealed partial class GraphicsTab : Control
         }
     }
 
-    // _Starfall Start: Particles
     private sealed class OptionParticleQuality : BaseOption
     {
         private readonly IConfigurationManager _cfg;
@@ -294,5 +293,4 @@ public sealed partial class GraphicsTab : Control
             return _dropDown.Button.SelectedId != QualityDefault;
         }
     }
-    // _Starfall End: Particles
 }

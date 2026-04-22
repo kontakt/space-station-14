@@ -1,8 +1,11 @@
-using Content.Shared._Starfall.Particles;
+using Content.Shared.Particles;
+using Content.Shared.Interaction;
+using Content.Shared.Interaction.Events;
+using Content.Shared.Projectiles;
 using Content.Shared.Throwing;
 using Content.Shared.Weapons.Ranged.Events;
 
-namespace Content.Client._Starfall.Particles;
+namespace Content.Client.Particles;
 
 /// <summary>
 /// Handles the particle onevent cases that (from as far as I am aware) cannot be replaced by <see cref="SpawnParticleEffect"/> and the trigger system.

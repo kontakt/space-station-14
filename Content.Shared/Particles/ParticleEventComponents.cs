@@ -1,6 +1,6 @@
 using Robust.Shared.Prototypes;
 
-namespace Content.Shared._Starfall.Particles;
+namespace Content.Shared.Particles;
 
 /// <summary>
 /// Base class for particle-on-event components that cannot be replaced by

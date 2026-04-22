@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Content.Shared._Starfall.Particles;
+namespace Content.Shared.Particles;
 
 /// <summary>
 /// Per-emitter runtime overrides for <see cref="ParticleEffectPrototype"/> fields.

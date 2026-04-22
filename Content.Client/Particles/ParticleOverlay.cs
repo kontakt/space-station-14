@@ -3,7 +3,7 @@ using Robust.Client.Graphics;
 using Robust.Shared.Enums;
 using Robust.Shared.Prototypes;
 
-namespace Content.Client._Starfall.Particles;
+namespace Content.Client.Particles;
 
 /// <summary>Draws all live particles for every active emitter each frame.</summary>
 public sealed class ParticleOverlay : Overlay

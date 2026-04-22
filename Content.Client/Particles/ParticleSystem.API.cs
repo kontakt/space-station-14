@@ -1,9 +1,9 @@
-using Content.Shared._Starfall.Particles;
+using Content.Shared.Particles;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using System.Numerics;
 
-namespace Content.Client._Starfall.Particles;
+namespace Content.Client.Particles;
 
 /// <summary>
 /// API for <see cref="ParticleSystem"/>.

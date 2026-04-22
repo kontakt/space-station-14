@@ -1,7 +1,7 @@
 using System.Numerics;
 using Robust.Shared.Prototypes;
 
-namespace Content.Shared._Starfall.Particles;
+namespace Content.Shared.Particles;
 
 /// <summary>
 /// Spawns a particle effect on this entity when it initializes.

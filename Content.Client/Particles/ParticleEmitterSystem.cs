@@ -1,6 +1,7 @@
-using Content.Shared._Starfall.Particles;
+using Content.Shared.Particles;
+using Robust.Shared.Map;
 
-namespace Content.Client._Starfall.Particles;
+namespace Content.Client.Particles;
 
 /// <summary>
 /// Spawns a particle effect on this client when an entity with

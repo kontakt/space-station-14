@@ -1,9 +1,9 @@
 using System.Numerics;
-using Content.Shared._Starfall.Particles;
+using Content.Shared.Particles;
 using Robust.Client.Graphics;
 using Robust.Shared.Map;
 
-namespace Content.Client._Starfall.Particles;
+namespace Content.Client.Particles;
 
 /// <summary>
 /// A running particle emitter and its live particle pool.
