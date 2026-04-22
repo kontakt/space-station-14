@@ -4,7 +4,7 @@ using Content.Shared.Atmos.Components;
 using Robust.Client.GameObjects;
 using Robust.Shared.Prototypes;
 
-namespace Content.Client.Particles;
+namespace Content.Client.Particles.Visuals;
 
 /// <summary>
 /// Particles when entities are on fire.
