@@ -58,13 +58,13 @@ public sealed class ActiveEmitter
     /// </summary>
     public ParticleRuntimeOverrides? Overrides;
 
-    // =^..^= Velocity tracking =^..^=
+    // Velocity tracking
 
     public Vector2 PreviousPosition;
     public Vector2 EmitterVelocity;
     public bool VelocityInitialized;
 
-    // =^..^= Aim-at targeting =^..^=
+    // Aim-at targeting
 
     /// <summary>
     /// When set, each tick the emit angle is recomputed to point toward this entity.
@@ -81,12 +81,12 @@ public sealed class ActiveEmitter
     /// <summary>Resolved emit angle in radians, recomputed each tick from the target if one is set.</summary>
     public float EffectiveEmitAngle;
 
-    // =^..^= Timed bursts =^..^=
+    // Timed bursts
 
     /// <summary>Tracks which <see cref="ParticleEffectPrototype.Bursts"/> entries have already fired.</summary>
     public readonly List<bool> FiredBursts = new();
 
-    // =^..^= Animation =^..^=
+    // Animation
 
     /// <summary>Resolved RSI frames. Populated on creation.
     /// Single-frame sprites have one entry and empty Delays.</summary>
@@ -98,7 +98,7 @@ public sealed class ActiveEmitter
     public int AnimFrame;
     public float AnimTimer;
 
-    // =^..^= Particles =^..^=
+    // Particles
 
     // ParticleData objects are never removed from Particles once added.
     // When a particle dies it's marked Alive = false and pushed onto FreePool.

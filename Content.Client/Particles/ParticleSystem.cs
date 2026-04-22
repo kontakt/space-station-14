@@ -723,7 +723,7 @@ public sealed partial class ParticleSystem : EntitySystem
 
     #endregion
 
-    #region =^..^= Helpers =^..^=
+    #region Helpers
 
     /// <summary>
     /// Advances a single live particle's simulation by one step.
@@ -919,7 +919,7 @@ public sealed partial class ParticleSystem : EntitySystem
 
     #endregion
 
-    #region =^..^= Curve Samplers =^..^=
+    #region Curve Samplers
 
     // ᓚᘏᗢ <( math scares me
     public static float SampleCurve(List<ParticleCurveKey> curve, float t)
@@ -1011,7 +1011,7 @@ public sealed partial class ParticleSystem : EntitySystem
 
     #endregion
 
-    #region =^..^= Value Noise =^..^=
+    #region Value Noise
 
     /// <summary>
     /// A simple 2D value noise function for particle turbulence. Not Perlin or Simplex, just a grid of random values with smooth interpolation.
