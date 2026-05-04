@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Numerics;
 using Robust.Client.Graphics;
 using Robust.Shared.Enums;
@@ -13,8 +12,14 @@ public sealed class ParticleOverlay : Overlay
     [Dependency] private readonly IPrototypeManager _proto = default!;
 
     private readonly ParticleSystem _system;
-    private readonly Dictionary<string, ShaderInstance> _shaderCache = new();
 
+    // Shader cache
+    private readonly Dictionary<string, ShaderInstance?> _shaderCache = new();
+
+    private readonly List<ActiveEmitter> _sortBuffer = new();
+    private static readonly Comparison<ActiveEmitter> RenderLayerComparison =
+        (a, b) => (a.Overrides?.RenderLayer ?? a.Proto.RenderLayer)
+            .CompareTo(b.Overrides?.RenderLayer ?? b.Proto.RenderLayer);
 
     public override OverlaySpace Space => OverlaySpace.WorldSpaceBelowFOV;
 
@@ -32,12 +37,14 @@ public sealed class ParticleOverlay : Overlay
         var cosR = MathF.Cos(-eyeAngle);
         var sinR = MathF.Sin(-eyeAngle);
 
-        // Sort emitters by RenderLayer so lower layers draw first
-        var sorted = _system.GetEmitters().OrderBy(e => e.Overrides?.RenderLayer ?? e.Proto.RenderLayer);
+        // Sort emitters, lowest layers render first
+        _sortBuffer.Clear();
+        _sortBuffer.AddRange(_system.GetEmitters());
+        _sortBuffer.Sort(RenderLayerComparison);
 
         string? activeShader = null; // track to avoid redundant calls
 
-        foreach (var emitter in sorted)
+        foreach (var emitter in _sortBuffer)
         {
             if (emitter.MapCoords.MapId != mapId) continue;
             if (!args.WorldBounds.Contains(emitter.MapCoords.Position)) continue;
@@ -57,11 +64,10 @@ public sealed class ParticleOverlay : Overlay
                 {
                     if (!_shaderCache.TryGetValue(wantedShader, out var cached))
                     {
-                        if (_proto.TryIndex<ShaderPrototype>(wantedShader, out var shaderProto))
-                        {
-                            cached = shaderProto.Instance();
-                            _shaderCache[wantedShader] = cached;
-                        }
+                        cached = _proto.TryIndex<ShaderPrototype>(wantedShader, out var shaderProto)
+                            ? shaderProto.Instance()
+                            : null;
+                        _shaderCache[wantedShader] = cached;
                     }
                     handle.UseShader(cached);
                 }
@@ -116,32 +122,55 @@ public sealed class ParticleOverlay : Overlay
                 var origin = proto.WorldSpace ? particle.SpawnOrigin : screenOrigin;
                 var worldPos = origin + worldOffset;
 
-                // StretchFactor: elongate along velocity direction proportional to speed
+                // StretchFactor: elongate along velocity direction proportional to speed.
+                // Rotation is derived from the velocity unit vector +precomputed eye cos/sin
                 var stretchFactor = ovr?.StretchFactor ?? proto.StretchFactor;
                 if (stretchFactor > 0f)
                 {
-                    var velLen = particle.Velocity.Length();
-                    if (velLen > 0.001f)
+                    var velLenSq = particle.Velocity.LengthSquared();
+                    if (velLenSq > 0.001f * 0.001f)
                     {
+                        var velLen = MathF.Sqrt(velLenSq);
                         var stretchY = 1f + velLen * stretchFactor;
-                        // Align sprite "up" with velocity direction (screen-space atan2)
-                        var velAngle = MathF.Atan2(particle.Velocity.X, particle.Velocity.Y);
-                        var totalRot = -eyeAngle + velAngle;
-                        var cV = MathF.Cos(totalRot);
-                        var sV = MathF.Sin(totalRot);
+                        // Rotate velocity unit vector by -eyeAngle using precomputed cosR/sinR.
+                        // ux = vel.X/velLen,  uy = vel.Y/velLen
+                        // cV = cos(-eye+velAngle) = cosR*uy - sinR*ux
+                        // sV = sin(-eye+velAngle) = sinR*uy + cosR*ux
+                        var invLen = 1f / velLen;
+                        var ux = particle.Velocity.X * invLen;
+                        var uy = particle.Velocity.Y * invLen;
+                        var cV = cosR * uy - sinR * ux;
+                        var sV = sinR * uy + cosR * ux;
                         handle.SetTransform(new Matrix3x2(cV, sV, -sV, cV, worldPos.X, worldPos.Y));
                         handle.DrawTextureRect(tex,
                             new Box2(-halfSize, -halfSize * stretchY, halfSize, halfSize * stretchY),
                             color);
-                        continue; // skip
+                        continue;
+                    }
+                }
+
+                // AlignToVelocity: rotate sprite to face its velocity direction.
+                if (proto.AlignToVelocity)
+                {
+                    var velLenSq = particle.Velocity.LengthSquared();
+                    if (velLenSq > 0.001f * 0.001f)
+                    {
+                        var invLen = 1f / MathF.Sqrt(velLenSq);
+                        var ux = particle.Velocity.X * invLen;
+                        var uy = particle.Velocity.Y * invLen;
+                        var cos = cosR * uy - sinR * ux;
+                        var sin = sinR * uy + cosR * ux;
+                        handle.SetTransform(new Matrix3x2(cos, sin, -sin, cos, worldPos.X, worldPos.Y));
+                        handle.DrawTextureRect(tex, new Box2(-halfSize, -halfSize, halfSize, halfSize), color);
+                        continue;
                     }
                 }
 
                 // Draw with rotation applied. Rotation is in radians, positive is clockwise, and 0 means "facing up" (aligned with SCREEN/eye/whatever Y axis).
                 var totalRotation = -eyeAngle + particle.Rotation;
-                var cos = MathF.Cos(totalRotation);
-                var sin = MathF.Sin(totalRotation);
-                handle.SetTransform(new Matrix3x2(cos, sin, -sin, cos, worldPos.X, worldPos.Y));
+                var cosP = MathF.Cos(totalRotation);
+                var sinP = MathF.Sin(totalRotation);
+                handle.SetTransform(new Matrix3x2(cosP, sinP, -sinP, cosP, worldPos.X, worldPos.Y));
                 handle.DrawTextureRect(tex, new Box2(-halfSize, -halfSize, halfSize, halfSize), color);
             }
         }

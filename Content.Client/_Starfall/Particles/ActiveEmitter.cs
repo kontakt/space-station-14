@@ -16,6 +16,12 @@ public sealed class ActiveEmitter
     /// <summary>Current world-space origin of the emitter.</summary>
     public MapCoordinates MapCoords;
 
+    /// <summary>
+    /// Additional world-space offset from <see cref="MapCoords"/> applied to the spawn origin.
+    /// Useful for nudging effects away from entity anchor points.
+    /// </summary>
+    public Vector2 SpawnOffset;
+
     /// <summary>Entity this emitter follows (if any).</summary>
     public EntityUid? AttachedEntity;
 

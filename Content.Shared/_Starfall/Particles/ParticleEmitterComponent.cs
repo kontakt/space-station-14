@@ -1,3 +1,4 @@
+using System.Numerics;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Starfall.Particles;
@@ -25,4 +26,11 @@ public sealed partial class ParticleEmitterComponent : Component
     /// </summary>
     [DataField]
     public float Intensity = 1f;
+
+    /// <summary>
+    /// Local-space offset applied to the spawn origin of this emitter.
+    /// Useful for shifting the effect away from the entity's anchor point.
+    /// </summary>
+    [DataField]
+    public Vector2 SpawnOffset;
 }

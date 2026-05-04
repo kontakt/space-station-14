@@ -1,6 +1,7 @@
 using Content.Shared._Starfall.Particles;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using System.Numerics;
 
 namespace Content.Client._Starfall.Particles;
 
@@ -18,15 +19,23 @@ public sealed partial class ParticleSystem
     /// <param name="entity">The entity to spawn particles on.</param>
     /// <param name="colorOverride">Optional color tint.</param>
     /// <param name="attach">When <c>true</c> (default), the emitter follows <paramref name="entity"/>.</param>
+    /// <param name="overrides">Optional runtime overrides applied before the first burst (if any).</param>
+    /// <param name="initialVelocity">
+    /// Seeds the emitter's velocity before the first tick.
+    /// Required for <see cref="ParticleEffectPrototype.InheritVelocity"/> to work on burst effects,
+    /// since burst particles are emitted before any tick can compute velocity automatically.
+    /// </param>
     /// <returns>The <see cref="ActiveEmitter"/> handle, or <c>null</c> if the effect could not be spawned.</returns>
     public ActiveEmitter? CreateParticle(
         ProtoId<ParticleEffectPrototype> effectId,
         EntityUid entity,
         Color? colorOverride = null,
-        bool attach = true)
+        bool attach = true,
+        ParticleRuntimeOverrides? overrides = null,
+        Vector2? initialVelocity = null)
     {
         var coords = _transform.GetMapCoordinates(entity);
-        return SpawnEffect(effectId, coords, attach ? entity : null, colorOverride);
+        return SpawnEffect(effectId, coords, attach ? entity : null, colorOverride, overrides, initialVelocity);
     }
 
     /// <summary>
@@ -35,13 +44,21 @@ public sealed partial class ParticleSystem
     /// <param name="effectId">The prototype ID of the effect to spawn.</param>
     /// <param name="coords">World position to spawn at.</param>
     /// <param name="colorOverride">Optional color tint.</param>
+    /// <param name="overrides">Optional runtime overrides applied before the first burst (if any).</param>
+    /// <param name="initialVelocity">
+    /// Seeds the emitter's velocity before the first tick.
+    /// Required for <see cref="ParticleEffectPrototype.InheritVelocity"/> to work on burst effects,
+    /// since burst particles are emitted before any tick can compute velocity automatically.
+    /// </param>
     /// <returns>The <see cref="ActiveEmitter"/> handle, or <c>null</c> if the effect could not be spawned.</returns>
     public ActiveEmitter? CreateParticle(
         ProtoId<ParticleEffectPrototype> effectId,
         MapCoordinates coords,
-        Color? colorOverride = null)
+        Color? colorOverride = null,
+        ParticleRuntimeOverrides? overrides = null,
+        Vector2? initialVelocity = null)
     {
-        return SpawnEffect(effectId, coords, null, colorOverride);
+        return SpawnEffect(effectId, coords, null, colorOverride, overrides, initialVelocity);
     }
 
     /// <summary>
@@ -61,4 +78,3 @@ public sealed partial class ParticleSystem
         StopEffect(handle);
     }
 }
-

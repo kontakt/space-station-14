@@ -64,4 +64,10 @@ public sealed class ParticleRuntimeOverrides
     public Angle? EmitAngle; // Base movement angle of each particle at spawn, in radians. 0 = facing right, positive = clockwise. SpreadAngle is added on top of this base angle as a random variance.
 
     #endregion
+    #region =^..^= Spawn position =^..^=
+
+    /// <summary>World-space offset from the emitter origin where particles are spawned.</summary>
+    public Vector2? SpawnOffset;
+
+    #endregion
 }
