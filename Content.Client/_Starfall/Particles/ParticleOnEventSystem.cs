@@ -32,6 +32,9 @@ public sealed class ParticleOnEventSystem : EntitySystem
 
     private void OnThrown(Entity<ParticleOnThrownComponent> ent, ref ThrownEvent args)
     {
+        // Stop any existing emitter first to avoid orphaning it on a re-throw.
+        StopThrownEmitter(ent.Owner);
+
         // Infinite-duration allowed: the emitter is stopped when the entity lands.
         var emitter = _particles.CreateParticle(ent.Comp.Effect, ent.Owner, ent.Comp.ColorOverride);
         if (emitter != null)
@@ -40,13 +43,17 @@ public sealed class ParticleOnEventSystem : EntitySystem
 
     private void OnThrownLanded(Entity<ParticleOnThrownComponent> ent, ref LandEvent args)
     {
-        if (_thrownEmitters.Remove(ent.Owner, out var emitter))
-            _particles.RemoveParticle(emitter);
+        StopThrownEmitter(ent.Owner);
     }
 
     private void OnThrownShutdown(Entity<ParticleOnThrownComponent> ent, ref ComponentShutdown args)
     {
-        if (_thrownEmitters.Remove(ent.Owner, out var emitter))
+        StopThrownEmitter(ent.Owner);
+    }
+
+    private void StopThrownEmitter(EntityUid uid)
+    {
+        if (_thrownEmitters.Remove(uid, out var emitter))
             _particles.RemoveParticle(emitter);
     }
 
