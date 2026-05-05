@@ -39,16 +39,27 @@ public sealed class ParticleOverlay : Overlay
 
         // Sort emitters, lowest layers render first
         _sortBuffer.Clear();
-        _sortBuffer.AddRange(_system.GetEmitters());
+        foreach (var emitter in _system.GetEmitters())
+        {
+            if (emitter.MapCoords.MapId != mapId)
+                continue;
+            if (!args.WorldBounds.Contains(emitter.MapCoords.Position))
+                continue;
+            if (emitter.Frames.Length == 0)
+                continue;
+
+            _sortBuffer.Add(emitter);
+        }
+
+        if (_sortBuffer.Count == 0)
+            return;
+
         _sortBuffer.Sort(RenderLayerComparison);
 
         string? activeShader = null; // track to avoid redundant calls
 
         foreach (var emitter in _sortBuffer)
         {
-            if (emitter.MapCoords.MapId != mapId) continue;
-            if (!args.WorldBounds.Contains(emitter.MapCoords.Position)) continue;
-            if (emitter.Frames.Length == 0) continue;
 
             var proto = emitter.Proto;
             var ovr = emitter.Overrides;

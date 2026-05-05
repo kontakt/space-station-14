@@ -555,9 +555,16 @@ public sealed partial class ParticleSystem : EntitySystem
 
                 // Bypass quality settings for gameplay-critical particles
                 var qualityMult = proto.IgnoreQualitySettings ? 1f : QualityMultipliers[Math.Clamp(_quality, 0, QualityMultipliers.Length - 1)];
+                var effectiveMax = proto.IgnoreQualitySettings && _quality < 3
+                    ? Math.Min(maxCount, IgnoreQualityMaxParticles)
+                    : maxCount;
+                var scaledMax = (int)Math.Ceiling(Math.Min(effectiveMax, HardMaxParticles) * qualityMult * emitter.Intensity);
                 var toEmit = (int)Math.Ceiling(burst.Count * qualityMult * emitter.Intensity);
-                for (int j = 0; j < toEmit && _liveParticleCount < _globalBudget; j++)
+                for (int j = 0; j < toEmit && _liveParticleCount < _globalBudget && liveCount < scaledMax; j++)
+                {
                     EmitParticle(emitter, eyeAngle);
+                    liveCount++;
+                }
                 emitter.FiredBursts[b] = true;
             }
         }
@@ -804,6 +811,7 @@ public sealed partial class ParticleSystem : EntitySystem
     /// </summary>
     private void AgeOffScreenParticles(ActiveEmitter emitter, float dt)
     {
+        emitter.Age += TimeSpan.FromSeconds(dt);
         foreach (var p in emitter.Particles)
         {
             if (!p.Alive) continue;
