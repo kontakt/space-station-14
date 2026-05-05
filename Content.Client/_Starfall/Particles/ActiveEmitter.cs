@@ -13,6 +13,12 @@ public sealed class ActiveEmitter
 {
     public ParticleEffectPrototype Proto = default!;
 
+    /// <summary>
+    /// How many sub-emitter links deep this emitter is. Root emitters are 0.
+    /// Sub-emitters will not spawn if depth would exceed <see cref="ParticleSystem.MaxSubEmitterDepth"/>.
+    /// </summary>
+    public int SubEmitterDepth;
+
     /// <summary>Current world-space origin of the emitter.</summary>
     public MapCoordinates MapCoords;
 

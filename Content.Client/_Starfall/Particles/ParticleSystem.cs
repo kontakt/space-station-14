@@ -29,7 +29,10 @@ public sealed partial class ParticleSystem : EntitySystem
     [Dependency] private readonly SpriteSystem _spriteSystem = default!;
 
     private readonly List<ActiveEmitter> _emitters = new();
-    private readonly List<(ProtoId<ParticleEffectPrototype> Id, MapCoordinates Coords)> _pendingSubEmitters = new();
+    private readonly List<(ProtoId<ParticleEffectPrototype> Id, MapCoordinates Coords, int Depth)> _pendingSubEmitters = new();
+
+    /// <summary>Maximum number of sub-emitter chains allowed. Prevents infinite recursive sub-emitter chains.</summary>
+    public const int MaxSubEmitterDepth = 3;
     private ParticleOverlay _overlay = default!;
 
     // Tally of live particles across all emitters. Incremented in EmitParticle, decremented on every Alive=false path.
@@ -125,7 +128,16 @@ public sealed partial class ParticleSystem : EntitySystem
 
     /// <summary>Spawns a particle effect at a given map coordinate.</summary>
     public ActiveEmitter? SpawnEffect(ProtoId<ParticleEffectPrototype> effectId, MapCoordinates coords, EntityUid? attachedEntity = null, Color? colorOverride = null, ParticleRuntimeOverrides? overrides = null, Vector2? initialVelocity = null)
+        => SpawnEffect(effectId, coords, depth: 0, attachedEntity: attachedEntity, colorOverride: colorOverride, overrides: overrides, initialVelocity: initialVelocity);
+
+    private ActiveEmitter? SpawnEffect(ProtoId<ParticleEffectPrototype> effectId, MapCoordinates coords, int depth, EntityUid? attachedEntity = null, Color? colorOverride = null, ParticleRuntimeOverrides? overrides = null, Vector2? initialVelocity = null)
     {
+        if (depth > MaxSubEmitterDepth)
+        {
+            Log.Warning($"ParticleSystem: subemitter depth exceeded MaxSubEmitterDepth ({MaxSubEmitterDepth}). Dropping '{effectId}'. DO NOT RECUSIVELY STACK SUBEMITTERS.");
+            return null;
+        }
+
         if (!_protoManager.TryIndex(effectId, out var proto))
             return null;
 
@@ -148,6 +160,7 @@ public sealed partial class ParticleSystem : EntitySystem
 
         var emitter = CreateEmitter(proto, coords, attachedEntity);
         emitter.ColorOverride = colorOverride;
+        emitter.SubEmitterDepth = depth;
 
         if (overrides != null)
             ApplyOverrides(emitter, overrides);
@@ -332,9 +345,9 @@ public sealed partial class ParticleSystem : EntitySystem
         var subIdx = 0;
         while (subIdx < _pendingSubEmitters.Count)
         {
-            var (id, coords) = _pendingSubEmitters[subIdx];
+            var (id, coords, depth) = _pendingSubEmitters[subIdx];
             subIdx++;
-            SpawnEffect(id, coords);
+            SpawnEffect(id, coords, depth: depth);
         }
     }
 
@@ -515,7 +528,8 @@ public sealed partial class ParticleSystem : EntitySystem
                 {
                     var worldPos = ComputeParticleWorldPos(p, emitter, eyeAngle);
                     _pendingSubEmitters.Add((proto.SubEmitterOnDeath.Value,
-                        new MapCoordinates(worldPos, emitter.MapCoords.MapId)));
+                        new MapCoordinates(worldPos, emitter.MapCoords.MapId),
+                        emitter.SubEmitterDepth + 1));
                 }
 
                 p.Alive = false;
@@ -695,7 +709,8 @@ public sealed partial class ParticleSystem : EntitySystem
         {
             var worldPos = ComputeParticleWorldPos(p, emitter, eyeAngle);
             _pendingSubEmitters.Add((proto.SubEmitterOnSpawn.Value,
-                new MapCoordinates(worldPos, emitter.MapCoords.MapId)));
+                new MapCoordinates(worldPos, emitter.MapCoords.MapId),
+                emitter.SubEmitterDepth + 1));
         }
     }
 
