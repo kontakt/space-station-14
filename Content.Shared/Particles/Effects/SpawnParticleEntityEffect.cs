@@ -1,7 +1,7 @@
 using Content.Shared.EntityEffects;
 using Robust.Shared.Prototypes;
 
-namespace Content.Shared._Starfall.Particles.Effects;
+namespace Content.Shared.Particles.Effects;
 
 /// <summary>
 /// An entity effect that spawns a particle effect on the target entity.

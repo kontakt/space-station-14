@@ -1,8 +1,8 @@
-using Content.Shared._Starfall.Particles.Effects;
+using Content.Shared.Particles.Effects;
 using Content.Shared.EntityEffects;
 using Robust.Shared.Prototypes;
 
-namespace Content.Client._Starfall.Particles.Effects;
+namespace Content.Client.Particles.Effects;
 
 /// <summary>
 /// Executes <see cref="SpawnParticleEffect"/> on the client, spawning a particle effect on the target entity.
