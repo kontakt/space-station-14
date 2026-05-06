@@ -93,7 +93,8 @@ public sealed class ParticleOverlay : Overlay
 
             foreach (var particle in emitter.Particles)
             {
-                if (!particle.Alive) continue;
+                if (!particle.Alive)
+                    continue;
 
                 var t = particle.AgeRatio;
 

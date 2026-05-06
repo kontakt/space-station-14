@@ -23,10 +23,8 @@ public sealed class GibMistParticleSystem : EntitySystem
     private void OnGibMist(GibMistParticleEvent ev)
     {
         var emitter = _particles.SpawnEffect(MistEffect, ev.Coords);
-        if (emitter == null)
-            return;
 
-        emitter.ColorOverride = ev.BloodColor;
+        emitter?.ColorOverride = ev.BloodColor;
     }
 }
 

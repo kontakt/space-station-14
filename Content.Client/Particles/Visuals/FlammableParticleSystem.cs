@@ -57,8 +57,8 @@ public sealed class FlammableParticleSystem : EntitySystem
             state.SmokeEmitter = _particles.SpawnEffect(SmokeEffect, coords, ent.Owner);
             state.FireEmitter  = _particles.SpawnEffect(FireEffect,  coords, ent.Owner);
 
-            if (state.SmokeEmitter != null) state.SmokeEmitter.Intensity = 1f;
-            if (state.FireEmitter != null)  state.FireEmitter.Intensity  = 1f;
+            state.SmokeEmitter?.Intensity = 1f;
+            state.FireEmitter?.Intensity  = 1f;
 
             state.OnFire = true;
         }
@@ -73,10 +73,8 @@ public sealed class FlammableParticleSystem : EntitySystem
         if (state.OnFire && state.FireEmitter != null)
         {
             var intensity = Math.Clamp(stacks / MaxStacks * 2f, 1f, 2f);
-            if (state.FireEmitter != null)
-                state.FireEmitter.Intensity = intensity;
-            if (state.SmokeEmitter != null)
-                state.SmokeEmitter.Intensity = intensity;
+            state.FireEmitter?.Intensity = intensity;
+            state.SmokeEmitter?.Intensity = intensity;
         }
     }
 

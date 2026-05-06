@@ -8,15 +8,8 @@ namespace Content.Shared.Particles.Visuals;
 /// triggering a blood-mist particle burst tinted to the entity's blood color.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GibMistParticleEvent : EntityEventArgs
+public sealed class GibMistParticleEvent(MapCoordinates coords, Color bloodColor) : EntityEventArgs
 {
-    public MapCoordinates Coords;
-    public Color BloodColor;
-
-    public GibMistParticleEvent(MapCoordinates coords, Color bloodColor)
-    {
-        Coords = coords;
-        BloodColor = bloodColor;
-    }
+    public MapCoordinates Coords = coords;
+    public Color BloodColor = bloodColor;
 }
-

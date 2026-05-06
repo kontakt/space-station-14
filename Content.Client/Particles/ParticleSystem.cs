@@ -52,10 +52,22 @@ public sealed partial class ParticleSystem : EntitySystem
 
     // Emission/count multipliers per quality level: Off, Low, Medium, High.
     // So when quality is set to Low, only 25% of the particles spawn, at Medium it's 50%, and at High it's 100%.
-    private static readonly float[] QualityMultipliers = { 0f, 0.25f, 0.5f, 1f };
+    private static readonly float[] QualityMultipliers =
+    [
+        0f,
+        0.25f,
+        0.5f,
+        1f,
+    ];
 
     // Default global particle budgets per quality level.
-    private static readonly int[] QualityBudgets = { 0, 2250, 5500, 8000 };
+    private static readonly int[] QualityBudgets =
+    [
+        0,
+        2250,
+        5500,
+        8000,
+    ];
 
     /// <summary>
     /// Absolute ceiling on live particles regardless of quality settings or anything else.
@@ -83,7 +95,7 @@ public sealed partial class ParticleSystem : EntitySystem
     /// </summary>
     private const int IgnoreQualityMaxParticles = 64;
 
-    #region =^..^= Particle System API =^..^=
+    #region Particle System API
     public override void Initialize()
     {
         base.Initialize();
@@ -353,7 +365,7 @@ public sealed partial class ParticleSystem : EntitySystem
 
     #endregion
 
-    #region =^..^= Emitter Internals =^..^=
+    #region Emitter Internals
 
     // <summary>Creates a new ActiveEmitter from a prototype and initial state.</summary>
     private ActiveEmitter CreateEmitter(ParticleEffectPrototype proto, MapCoordinates coords, EntityUid? attached)
@@ -371,8 +383,9 @@ public sealed partial class ParticleSystem : EntitySystem
         emitter.EffectiveEmitAngle = (float)emitter.Proto.EmitAngle.Theta;
 
         foreach (var _ in proto.Bursts)
+        {
             emitter.FiredBursts.Add(false);
-
+        }
         return emitter;
     }
 
@@ -513,7 +526,7 @@ public sealed partial class ParticleSystem : EntitySystem
         }
 
         // Simulate live particles
-        int liveCount = 0;
+        var liveCount = 0;
         foreach (var p in emitter.Particles)
         {
             if (!p.Alive)
@@ -545,7 +558,7 @@ public sealed partial class ParticleSystem : EntitySystem
         // Timed bursts
         if (!emitter.Exhausted)
         {
-            for (int b = 0; b < proto.Bursts.Count; b++)
+            for (var b = 0; b < proto.Bursts.Count; b++)
             {
                 if (emitter.FiredBursts[b])
                     continue;
@@ -583,7 +596,7 @@ public sealed partial class ParticleSystem : EntitySystem
             if (canEmit > 0)
             {
                 // EmissionOverTime rate multiplier
-                float emissionMult = 1f;
+                var emissionMult = 1f;
                 if (proto.EmissionOverTime.Count > 0)
                 {
                     var t = duration > 0f
@@ -593,7 +606,7 @@ public sealed partial class ParticleSystem : EntitySystem
                 }
 
                 emitter.EmitAccum += emissionRate * emissionMult * dt * emitter.Intensity;
-                int toEmit = (int)emitter.EmitAccum;
+                var toEmit = (int)emitter.EmitAccum;
                 emitter.EmitAccum -= toEmit;
                 toEmit = Math.Min(toEmit, canEmit);
 
@@ -764,9 +777,9 @@ public sealed partial class ParticleSystem : EntitySystem
         // Terminal speed cap: termSpeedSq is termSpeed*termSpeed precomputed per tick
         if (termSpeedSq < float.MaxValue)
         {
-            var speedSq = p.Velocity.LengthSquared();
-            if (speedSq > termSpeedSq)
-                p.Velocity *= termSpeed / MathF.Sqrt(speedSq);
+            var speed = p.Velocity.Length();
+            if (speed > termSpeed)
+                p.Velocity *= termSpeed / speed;
         }
 
         // Advance position

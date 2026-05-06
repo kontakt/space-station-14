@@ -34,7 +34,7 @@ public sealed class ActiveEmitter
     /// <summary>Time elapsed since this emitter was created.</summary>
     public TimeSpan Age;
 
-    /// <summary>Eemission accumulator for sub-tick emission rates.</summary>
+    /// <summary>Emission accumulator for sub-tick emission rates.</summary>
     public float EmitAccum;
 
     /// <summary>True once the emitter stops producing new particles. Existing particles live out their lifetimes.</summary>
