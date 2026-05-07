@@ -763,7 +763,7 @@ public sealed partial class ParticleSystem : EntitySystem
 
         // ForceOverLifetime
         if (proto.ForceOverLifetime.Count > 0)
-            p.Velocity += SampleVector2Curve(proto.ForceOverLifetime, p.AgeRatio) * dt;
+            p.Velocity += SampleCurve(proto.ForceOverLifetime, p.AgeRatio) * dt;
 
         // SpeedOverLifetime: rescale velocity magnitude to the curve-defined speed
         if (proto.SpeedOverLifetime.Count > 0)
@@ -787,7 +787,7 @@ public sealed partial class ParticleSystem : EntitySystem
 
         // VelocityOverLifetime: positional nudge (does not modify velocity)
         if (proto.VelocityOverLifetime.Count > 0)
-            p.LocalOffset += SampleVector2Curve(proto.VelocityOverLifetime, p.AgeRatio) * dt;
+            p.LocalOffset += SampleCurve(proto.VelocityOverLifetime, p.AgeRatio) * dt;
 
         // Gravity
         if (gravity != 0f)
@@ -934,15 +934,22 @@ public sealed partial class ParticleSystem : EntitySystem
 
     #region Curve Samplers
 
-    // ᓚᘏᗢ <( math scares me
-    public static float SampleCurve(List<ParticleCurveKey> curve, float t)
-    {
-        if (curve.Count == 0)
-            return 1f;
-        if (curve.Count == 1)
-            return curve[0].Value;
+    public static float SampleCurve(IReadOnlyList<FloatCurveKey> curve, float t) => SampleCurve(curve, t, float.Lerp);
+    public static Color SampleCurve(IReadOnlyList<ColorCurveKey> curve, float t) => SampleCurve(curve, t, Color.InterpolateBetween);
+    public static Vector2 SampleCurve(IReadOnlyList<Vector2CurveKey> curve, float t) => SampleCurve(curve, t, Vector2.Lerp);
 
-        ParticleCurveKey? prev = null, next = null;
+    public static T SampleCurve<T>(IReadOnlyList<CurveKey<T>> curve, float t, Func<T, T, float, T> lerp)
+    {
+
+        switch (curve.Count)
+        {
+            case 0:
+                throw new InvalidOperationException("Curve contains no elements");
+            case 1:
+                return curve[0].Value;
+        }
+
+        CurveKey<T>? prev = null, next = null;
         foreach (var key in curve)
         {
             if (key.Time <= t)
@@ -961,65 +968,7 @@ public sealed partial class ParticleSystem : EntitySystem
         var span = next.Time - prev.Time;
         if (span <= 0f)
             return prev.Value;
-        return prev.Value + (next.Value - prev.Value) * ((t - prev.Time) / span);
-    }
-
-    public static Color SampleColorCurve(List<ColorCurveKey> curve, float t)
-    {
-        if (curve.Count == 0)
-            return Color.White;
-        if (curve.Count == 1)
-            return curve[0].Color;
-
-        ColorCurveKey? prev = null, next = null;
-        foreach (var key in curve)
-        {
-            if (key.Time <= t)
-                prev = key;
-            else
-            {
-                next = key;
-                break;
-            }
-        }
-        if (prev == null)
-            return curve[0].Color;
-        if (next == null)
-            return prev.Color;
-
-        var span = next.Time - prev.Time;
-        if (span <= 0f)
-            return prev.Color;
-        return Color.InterpolateBetween(prev.Color, next.Color, (t - prev.Time) / span);
-    }
-
-    public static Vector2 SampleVector2Curve(List<Vector2CurveKey> curve, float t)
-    {
-        if (curve.Count == 0)
-            return Vector2.Zero;
-        if (curve.Count == 1)
-            return curve[0].Value;
-
-        Vector2CurveKey? prev = null, next = null;
-        foreach (var key in curve)
-        {
-            if (key.Time <= t)
-                prev = key;
-            else
-            {
-                next = key;
-                break;
-            }
-        }
-        if (prev == null)
-            return curve[0].Value;
-        if (next == null)
-            return prev.Value;
-
-        var span = next.Time - prev.Time;
-        if (span <= 0f)
-            return prev.Value;
-        return Vector2.Lerp(prev.Value, next.Value, (t - prev.Time) / span);
+        return lerp(prev.Value, next.Value, (t - prev.Time) / span);
     }
 
     #endregion

@@ -101,7 +101,7 @@ public sealed class ParticleOverlay : Overlay
                 // Color: use ColorOverLifetime gradient if available, otherwise lerp StartColor to EndColor
                 Color color;
                 if (proto.ColorOverLifetime.Count > 0)
-                    color = ParticleSystem.SampleColorCurve(proto.ColorOverLifetime, t);
+                    color = ParticleSystem.SampleCurve(proto.ColorOverLifetime, t);
                 else
                 {
                     var startColor = ovr?.StartColor ?? proto.StartColor;

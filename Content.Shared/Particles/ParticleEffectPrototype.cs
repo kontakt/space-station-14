@@ -5,33 +5,18 @@ using Robust.Shared.Utility;
 
 namespace Content.Shared.Particles;
 
-/// <summary>Keyframe for a float-over-lifetime curve. Time is normalised 0–1.</summary>
-[DataDefinition]
-public sealed partial class ParticleCurveKey
+/// <summary>Keyframe for a curve. Time is normalized 0–1.</summary>
+[ImplicitDataDefinitionForInheritors]
+[Virtual]
+public partial class CurveKey<T>
 {
     [DataField(required: true)] public float Time { get; private set; }
-    [DataField(required: true)] public float Value { get; private set; }
+    [DataField(required: true)] public T Value { get; private set; }
 }
 
-/// <summary>Keyframe for a color-over-lifetime gradient. Time is normalised 0–1.</summary>
-[DataDefinition]
-public sealed partial class ColorCurveKey
-{
-    /// Time along the particle's lifetime (0–1). 0 = birth, 1 = death.
-    [DataField(required: true)] public float Time { get; private set; }
-    /// Color at this point in the lifetime. Alpha channel is respected and multiplied with the alpha curve if present.
-    [DataField(required: true)] public Color Color { get; private set; }
-}
-
-/// <summary>Keyframe for a Vector2-over-lifetime curve. Time is normalised 0–1.</summary>
-[DataDefinition]
-public sealed partial class Vector2CurveKey
-{
-    /// Time along the particle's lifetime (0–1). 0 = birth, 1 = death.
-    [DataField(required: true)] public float Time { get; private set; }
-    /// Vector2 value at this point in the lifetime. Interpretation depends on the context of the curve (force, velocity, etc).
-    [DataField(required: true)] public Vector2 Value { get; private set; }
-}
+public sealed partial class FloatCurveKey : CurveKey<float>;
+public sealed partial class ColorCurveKey : CurveKey<Color>;
+public sealed partial class Vector2CurveKey : CurveKey<Vector2>;
 
 /// <summary>Fires <see cref="Count"/> particles at <see cref="Time"/> after the emitter starts.</summary>
 [DataDefinition]
@@ -93,7 +78,7 @@ public sealed partial class ParticleEffectPrototype : IPrototype, IInheritingPro
     /// Alpha curve over lifetime (0–1). Multiplied on top of the color's alpha channel.
     /// Leave empty to rely on alpha baked into the colors directly.
     /// </summary>
-    [DataField] public List<ParticleCurveKey> AlphaOverLifetime { get; private set; } = new();
+    [DataField] public List<FloatCurveKey> AlphaOverLifetime { get; private set; } = new();
 
     /// <summary>Shader to apply when drawing particles.</summary>
     [DataField] public string? Shader { get; private set; }
@@ -121,7 +106,7 @@ public sealed partial class ParticleEffectPrototype : IPrototype, IInheritingPro
     [DataField] public float SizeVariance { get; private set; }
 
     /// <summary>Size multiplier curve over lifetime. Leave empty for constant size.</summary>
-    [DataField] public List<ParticleCurveKey> SizeOverLifetime { get; private set; } = new();
+    [DataField] public List<FloatCurveKey> SizeOverLifetime { get; private set; } = new();
 
     /// <summary>
     /// Stretches particles along their velocity direction.
@@ -148,7 +133,7 @@ public sealed partial class ParticleEffectPrototype : IPrototype, IInheritingPro
     [DataField] public float SpeedVariance { get; private set; } = 0.3f;
 
     /// <summary>Speed multiplier curve over lifetime. Leave empty for constant speed.</summary>
-    [DataField] public List<ParticleCurveKey> SpeedOverLifetime { get; private set; } = new();
+    [DataField] public List<FloatCurveKey> SpeedOverLifetime { get; private set; } = new();
 
     /// <summary>
     /// Constant velocity added to every particle each frame (world units/sec).
@@ -228,7 +213,7 @@ public sealed partial class ParticleEffectPrototype : IPrototype, IInheritingPro
     /// Emission rate multiplier curve over the emitter's duration.
     /// When <see cref="Duration"/> > 0, t = age / duration. When duration is zero (infinite), t clamps to 1 after 1 second.
     /// </summary>
-    [DataField] public List<ParticleCurveKey> EmissionOverTime { get; private set; } = new();
+    [DataField] public List<FloatCurveKey> EmissionOverTime { get; private set; } = new();
 
     /// <summary>
     /// Max live particles this emitter can have at once.
