@@ -146,7 +146,7 @@ public sealed partial class ParticleSystem : EntitySystem
     {
         if (depth > MaxSubEmitterDepth)
         {
-            Log.Warning($"ParticleSystem: subemitter depth exceeded MaxSubEmitterDepth ({MaxSubEmitterDepth}). Dropping '{effectId}'. DO NOT RECUSIVELY STACK SUBEMITTERS.");
+            Log.Warning($"ParticleSystem: subemitter depth exceeded MaxSubEmitterDepth ({MaxSubEmitterDepth}). Dropping '{effectId}'. DO NOT RECURSIVELY STACK SUBEMITTERS.");
             return null;
         }
 
