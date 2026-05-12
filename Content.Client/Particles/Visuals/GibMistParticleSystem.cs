@@ -8,9 +8,9 @@ namespace Content.Client.Particles.Visuals;
 /// Receives <see cref="GibMistParticleEvent"/> from the server and spawns
 /// a blood-mist particle burst tinted to the entity's actual blood color.
 /// </summary>
-public sealed class GibMistParticleSystem : EntitySystem
+public sealed partial class GibMistParticleSystem : EntitySystem
 {
-    [Dependency] private readonly ParticleSystem _particles = default!;
+    [Dependency] private ParticleSystem _particles = default!;
 
     private static readonly ProtoId<ParticleEffectPrototype> MistEffect = "GibMist";
 
