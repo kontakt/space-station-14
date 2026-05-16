@@ -23,6 +23,7 @@ public sealed class StartEndGameRulesTest : GameTest
     [Test]
     public async Task TestAllConcurrent()
     {
+        Assert.That(false);
         var pair = Pair;
         var server = pair.Server;
         await server.WaitIdleAsync();
