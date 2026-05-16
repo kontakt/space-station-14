@@ -53,14 +53,14 @@ jobs:
       if: failure
       shell: python
       run: |
-      import os
-      import xml.etree.ElementTree as ET
-      env_file = os.getenv('GITHUB_ENV')
-      test_failures = ET.parse('./test_results/logs/Content.Tests.xml').getroot().findall(".//test-case[@result='Failed']")
-      integration_failures = ET.parse('./test_results/logs/Content.IntegrationTests.xml').getroot().findall(".//test-case[@result='Failed']")
-      with open(env_file, "a") as f:
-        f.write("TEST_FAILS={'||'.join([x.get('fullname') for x in test_failures])}")
-        f.write("INTEGRATION_FAILS={'||'.join([x.get('fullname') for x in integration_failures])}")
+        import os
+        import xml.etree.ElementTree as ET
+        env_file = os.getenv('GITHUB_ENV')
+        test_failures = ET.parse('./test_results/logs/Content.Tests.xml').getroot().findall(".//test-case[@result='Failed']")
+        integration_failures = ET.parse('./test_results/logs/Content.IntegrationTests.xml').getroot().findall(".//test-case[@result='Failed']")
+        with open(env_file, "a") as f:
+          f.write("TEST_FAILS={'||'.join([x.get('fullname') for x in test_failures])}")
+          f.write("INTEGRATION_FAILS={'||'.join([x.get('fullname') for x in integration_failures])}")
 
     - name: Rerun Content.Tests
       if: steps.integration_tests.outcome == 'failure'
@@ -78,13 +78,13 @@ jobs:
       if: failure
       shell: python
       run: |
-      import os
-      import xml.etree.ElementTree as ET
-      env_file = os.getenv('GITHUB_ENV')
-      test_failures = ET.parse('./test_results/logs/Content.Tests.xml').getroot().findall(".//test-case[@result='Failed']")
-      integration_failures = ET.parse('./test_results/logs/Content.IntegrationTests.xml').getroot().findall(".//test-case[@result='Failed']")
-      os.environ["TEST_FAILS"]="||".join([x.get('fullname') for x in test_failures])
-      os.environ["INTEGRATION_FAILS"]="||".join([x.get('fullname') for x in integration_failures])
+        import os
+        import xml.etree.ElementTree as ET
+        env_file = os.getenv('GITHUB_ENV')
+        test_failures = ET.parse('./test_results/logs/Content.Tests.xml').getroot().findall(".//test-case[@result='Failed']")
+        integration_failures = ET.parse('./test_results/logs/Content.IntegrationTests.xml').getroot().findall(".//test-case[@result='Failed']")
+        os.environ["TEST_FAILS"]="||".join([x.get('fullname') for x in test_failures])
+        os.environ["INTEGRATION_FAILS"]="||".join([x.get('fullname') for x in integration_failures])
 
   report:
     needs: [ build ]
