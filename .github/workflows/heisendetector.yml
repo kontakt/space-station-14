@@ -50,7 +50,7 @@ jobs:
         dotnet test --no-build --configuration DebugOpt Content.IntegrationTests/Content.IntegrationTests.csproj -- NUnit.ConsoleOut=0 NUnit.MapWarningTo=Failed NUnit.TestOutputXml="logs" NUnit.WorkDirectory="$(pwd)/test_results"
 
     - name: get failures
-      if: failure
+      if: failure()
       shell: python
       run: |
         import os
@@ -75,7 +75,7 @@ jobs:
         dotnet test --no-build --configuration DebugOpt Content.IntegrationTests/Content.IntegrationTests.csproj --filter $INTEGRATION_FAILS -- NUnit.ConsoleOut=0 NUnit.MapWarningTo=Failed NUnit.TestOutputXml="logs" NUnit.WorkDirectory="$(pwd)/retest_results"
 
     - name: get independent failures
-      if: failure
+      if: failure()
       shell: python
       run: |
         import os
