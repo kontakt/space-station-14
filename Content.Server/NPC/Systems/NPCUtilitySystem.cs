@@ -365,30 +365,30 @@ public sealed partial class NPCUtilitySystem : EntitySystem
                 return 0f;
             }
             case TargetOnFireCon:
-                {
-                    if (TryComp(targetUid, out FlammableComponent? fire) && fire.OnFire)
-                        return 1f;
-                    return 0f;
-                }
+            {
+                if (TryComp(targetUid, out FlammableComponent? fire) && fire.OnFire)
+                    return 1f;
+                return 0f;
+            }
             case TargetIsStunnedCon:
-                {
-                    return HasComp<StunnedComponent>(targetUid) ? 1f : 0f;
-                }
+            {
+                return HasComp<StunnedComponent>(targetUid) ? 1f : 0f;
+            }
             case TurretTargetingCon:
-                {
-                    if (!TryComp<TurretTargetSettingsComponent>(owner, out var turretTargetSettings) ||
-                        _turretTargetSettings.EntityIsTargetForTurret((owner, turretTargetSettings), targetUid))
-                        return 1f;
+            {
+                if (!TryComp<TurretTargetSettingsComponent>(owner, out var turretTargetSettings) ||
+                    _turretTargetSettings.EntityIsTargetForTurret((owner, turretTargetSettings), targetUid))
+                    return 1f;
 
-                    return 0f;
-                }
+                return 0f;
+            }
             case TargetLowTempCon con:
-                {
-                    if (!TryComp<TemperatureComponent>(targetUid, out var temperature))
-                        return 0f;
+            {
+                if (!TryComp<TemperatureComponent>(targetUid, out var temperature))
+                    return 0f;
 
-                    return temperature.CurrentTemperature <= con.MinTemp ? 1f : 0f;
-                }
+                return temperature.CurrentTemperature <= con.MinTemp ? 1f : 0f;
+            }
             case TargetBesideCon:
             {
                 if (!TryComp(targetUid, out TransformComponent? targetXform) ||
