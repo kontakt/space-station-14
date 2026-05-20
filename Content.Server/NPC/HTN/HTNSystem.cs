@@ -387,11 +387,21 @@ public sealed partial class HTNSystem : EntitySystem
                     break;
                 case HTNOperatorStatus.Failed:
                     ShutdownTask(currentOperator, blackboard, status);
+
+                    // Our operator crit while doing an action
+                    if (component.Plan is null)
+                        break;
+
                     ShutdownPlan(component);
                     break;
                 // Operator completed so go to the next one.
                 case HTNOperatorStatus.Finished:
                     ShutdownTask(currentOperator, blackboard, status);
+
+                    // Our operator crit while doing an action
+                    if (component.Plan is null)
+                        break;
+
                     component.Plan.Index++;
 
                     // Plan finished!

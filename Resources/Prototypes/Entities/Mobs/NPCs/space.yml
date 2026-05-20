@@ -429,7 +429,7 @@
   - type: HTN
     constantlyReplan: false
     rootTask:
-      task: MouseCompound
+      task: RuminantCompound
   - type: Physics
   - type: Fixtures
     fixtures:

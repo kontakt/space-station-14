@@ -367,7 +367,7 @@
   - type: HTN
     constantlyReplan: false
     rootTask:
-      task: MouseCompound
+      task: RuminantCompound
   - type: Physics
   - type: Fixtures
     fixtures:
@@ -1782,6 +1782,8 @@
     constantlyReplan: false
     rootTask:
       task: MouseCompound
+  - type: Insulated
+    coefficient: 2 # Crit in one bite of an LV wire
   - type: Physics
   - type: FaxableObject
     insertingState: inserting_mouse

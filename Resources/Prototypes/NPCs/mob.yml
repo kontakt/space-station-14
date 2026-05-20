@@ -27,11 +27,14 @@
   branches:
     - tasks:
         - !type:HTNCompoundTask
+          task: CutCablesCompound
+    - tasks:
+        - !type:HTNCompoundTask
           task: FoodCompound
     - tasks:
         - !type:HTNCompoundTask
           task: IdleCompound
-          
+
 - type: htnCompound
   id: MoproachCompound
   branches:

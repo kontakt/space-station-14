@@ -1,0 +1,31 @@
+﻿- type: htnCompound
+  id: CutCablesCompound
+  branches:
+  - tasks:
+    - !type:HTNPrimitiveTask
+      operator: !type:UtilityOperator
+        proto: OverCable
+    - !type:HTNPrimitiveTask
+      preconditions:
+      - !type:TargetInLOSPrecondition
+        targetKey: Target
+        rangeKey: InteractRange
+      operator: !type:SnipCableOperator
+        targetKey: Target
+
+- type: utilityQuery
+  id: OverCable
+  query:
+  - !type:ComponentQuery
+    components:
+    - type: Cable
+  considerations:
+  - !type:TargetBesideCon
+    curve: !type:PresetCurve
+      preset: TargetDistance
+  - !type:CanInteractCon
+    curve: !type:BoolCurve
+  - !type:TargetAccessibleCon
+    curve: !type:BoolCurve
+  - !type:TargetInLOSOrCurrentCon
+    curve: !type:BoolCurve

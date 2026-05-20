@@ -28,6 +28,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using Content.Shared.Atmos.Components;
 using System.Linq;
+using Content.Shared.ActionBlocker;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs.Components;
@@ -43,6 +44,7 @@ namespace Content.Server.NPC.Systems;
 public sealed partial class NPCUtilitySystem : EntitySystem
 {
     [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private ActionBlockerSystem _actionBlocker = default!;
     [Dependency] private ContainerSystem _container = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private HandsSystem _hands = default!;
@@ -387,6 +389,25 @@ public sealed partial class NPCUtilitySystem : EntitySystem
 
                     return temperature.CurrentTemperature <= con.MinTemp ? 1f : 0f;
                 }
+            case TargetBesideCon:
+            {
+                if (!TryComp(targetUid, out TransformComponent? targetXform) ||
+                    !TryComp(owner, out TransformComponent? xform))
+                {
+                    return 0f;
+                }
+
+                if (!targetXform.Coordinates.TryDistance(EntityManager, _transform, xform.Coordinates, out var distance))
+                {
+                    return 0f;
+                }
+
+                return Math.Clamp(distance / 0.5f, 0f, 1f);
+            }
+            case CanInteractCon:
+            {
+                return _actionBlocker.CanInteract(owner, targetUid) ? 1 : 0;
+            }
             default:
                 throw new NotImplementedException();
         }
