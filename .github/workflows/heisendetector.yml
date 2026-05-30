@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.save.outputs.json }}
 
     steps:
     - name: Checkout Master
@@ -51,40 +53,26 @@ jobs:
 
     - name: get failures
       if: failure()
+      id: get_fails
       shell: python
       run: |
         import os
         import xml.etree.ElementTree as ET
-        env_file = os.getenv('GITHUB_ENV')
+        env_file = os.getenv('GITHUB_OUTPUT')
         test_failures = ET.parse('./test_results/logs/Content.Tests.xml').getroot().findall(".//test-case[@result='Failed']")
         integration_failures = ET.parse('./test_results/logs/Content.IntegrationTests.xml').getroot().findall(".//test-case[@result='Failed']")
         with open(env_file, "a") as f:
           f.write("TEST_FAILS={'||'.join([x.get('fullname') for x in test_failures])}")
           f.write("INTEGRATION_FAILS={'||'.join([x.get('fullname') for x in integration_failures])}")
 
-    - name: Rerun Content.Tests
-      if: steps.integration_tests.outcome == 'failure'
-      shell: pwsh
-      run: dotnet test --no-build --configuration DebugOpt Content.Tests/Content.Tests.csproj --filter $TEST_FAILS -- NUnit.ConsoleOut=0 NUnit.TestOutputXml="logs" NUnit.WorkDirectory="$(pwd)/retest_results"
-
-    - name: Rerun Content.IntegrationTests
-      if: steps.tests.outcome == 'failure'
-      shell: pwsh
-      run: |
-        $env:DOTNET_gcServer=1
-        dotnet test --no-build --configuration DebugOpt Content.IntegrationTests/Content.IntegrationTests.csproj --filter $INTEGRATION_FAILS -- NUnit.ConsoleOut=0 NUnit.MapWarningTo=Failed NUnit.TestOutputXml="logs" NUnit.WorkDirectory="$(pwd)/retest_results"
-
-    - name: get independent failures
+    - name: Store matrix
       if: failure()
-      shell: python
-      run: |
-        import os
-        import xml.etree.ElementTree as ET
-        env_file = os.getenv('GITHUB_ENV')
-        test_failures = ET.parse('./test_results/logs/Content.Tests.xml').getroot().findall(".//test-case[@result='Failed']")
-        integration_failures = ET.parse('./test_results/logs/Content.IntegrationTests.xml').getroot().findall(".//test-case[@result='Failed']")
-        os.environ["TEST_FAILS"]="||".join([x.get('fullname') for x in test_failures])
-        os.environ["INTEGRATION_FAILS"]="||".join([x.get('fullname') for x in integration_failures])
+      id: save
+      uses: nickofthyme/object-remap@v3
+      with:
+        include.*.number: ${{ toJSON(fromJSON(steps.fetch.outputs.data).*.number) }}
+        include.*.title: ${{ toJSON(fromJSON(steps.fetch.outputs.data).*.title) }}
+        include.*.username: ${{ toJSON(fromJSON(steps.fetch.outputs.data).*.user.login) }}
 
   report:
     needs: [ build ]
