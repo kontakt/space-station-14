@@ -18,16 +18,13 @@ public sealed partial class DeliverySystem
     [Dependency] private EntityTableSystem _entityTable = default!;
     [Dependency] private SharedPowerReceiverSystem _power = default!;
 
-    private void InitializeSpawning()
-    {
-        SubscribeLocalEvent<CargoDeliveryDataComponent, MapInitEvent>(OnDataMapInit);
-    }
-
+    [SubscribeLocalEvent]
     private void OnDataMapInit(Entity<CargoDeliveryDataComponent> ent, ref MapInitEvent args)
     {
         ent.Comp.NextDelivery = _timing.CurTime + ent.Comp.MinDeliveryCooldown; // We want an early wave of mail so cargo doesn't have to wait
     }
 
+    /// <inheritdoc />
     protected override void SpawnDeliveries(Entity<DeliverySpawnerComponent?> ent)
     {
         if (!Resolve(ent.Owner, ref ent.Comp))

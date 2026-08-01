@@ -32,7 +32,6 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
     [Dependency] private LabelSystem _label = default!;
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private ChatSystem _chat = default!;
-    [Dependency] private IPrototypeManager _protoMan = default!;
     [Dependency] private SharedJobSystem _jobs = default!;
 
     /// <summary>
@@ -40,15 +39,7 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
     /// </summary>
     private static readonly LocId DefaultMessage = "delivery-penalty-default-reason";
 
-    public override void Initialize()
-    {
-        base.Initialize();
-
-        SubscribeLocalEvent<DeliveryComponent, MapInitEvent>(OnMapInit);
-
-        InitializeSpawning();
-    }
-
+    [SubscribeLocalEvent]
     private void OnMapInit(Entity<DeliveryComponent> ent, ref MapInitEvent args)
     {
         if (_station.GetStationInMap(Transform(ent).MapID) is not { } stationId)
@@ -155,6 +146,7 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
         DirtyField(ent.Owner, ent.Comp, nameof(DeliveryComponent.WasPenalized));
     }
 
+    /// <inheritdoc/>
     public override void Update(float frameTime)
     {
         base.Update(frameTime);

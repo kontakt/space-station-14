@@ -35,20 +35,17 @@ public abstract partial class SharedDeliverySystem : EntitySystem
     private static readonly ProtoId<TagPrototype> TrashTag = "Trash";
     private static readonly ProtoId<TagPrototype> RecyclableTag = "Recyclable";
 
+    /// <inheritdoc />
     public override void Initialize()
     {
         base.Initialize();
 
-        SubscribeLocalEvent<DeliveryComponent, ExaminedEvent>(OnDeliveryExamine);
-        SubscribeLocalEvent<DeliveryComponent, UseInHandEvent>(OnUseInHand);
         SubscribeLocalEvent<DeliveryComponent, GetVerbsEvent<AlternativeVerb>>(OnGetDeliveryVerbs);
-        SubscribeLocalEvent<DeliveryComponent, AttemptSimpleToolUseEvent>(OnAttemptSimpleToolUse);
-        SubscribeLocalEvent<DeliveryComponent, SimpleToolDoAfterEvent>(OnSimpleToolUse);
 
-        SubscribeLocalEvent<DeliverySpawnerComponent, ExaminedEvent>(OnSpawnerExamine);
         SubscribeLocalEvent<DeliverySpawnerComponent, GetVerbsEvent<AlternativeVerb>>(OnGetSpawnerVerbs);
     }
 
+    [SubscribeLocalEvent]
     private void OnDeliveryExamine(Entity<DeliveryComponent> ent, ref ExaminedEvent args)
     {
         var jobTitle = ent.Comp.RecipientJobTitle ?? Loc.GetString("delivery-recipient-no-job");
@@ -73,11 +70,13 @@ public abstract partial class SharedDeliverySystem : EntitySystem
         }
     }
 
+    [SubscribeLocalEvent]
     private void OnSpawnerExamine(Entity<DeliverySpawnerComponent> ent, ref ExaminedEvent args)
     {
         args.PushMarkup(Loc.GetString("delivery-teleporter-amount-examine", ("amount", ent.Comp.ContainedDeliveryAmount)), 50);
     }
 
+    [SubscribeLocalEvent]
     private void OnUseInHand(Entity<DeliveryComponent> ent, ref UseInHandEvent args)
     {
         args.Handled = true;
@@ -114,13 +113,14 @@ public abstract partial class SharedDeliverySystem : EntitySystem
         });
     }
 
-
+    [SubscribeLocalEvent]
     private void OnAttemptSimpleToolUse(Entity<DeliveryComponent> ent, ref AttemptSimpleToolUseEvent args)
     {
         if (ent.Comp.IsOpened || !ent.Comp.IsLocked)
             args.Cancelled = true;
     }
 
+    [SubscribeLocalEvent]
     private void OnSimpleToolUse(Entity<DeliveryComponent> ent, ref SimpleToolDoAfterEvent args)
     {
         if (ent.Comp.IsOpened || args.Cancelled)
