@@ -39,8 +39,6 @@
   - type: Label
     examinable: false
   - type: FingerprintReader
-    failPopup: fingerprint-reader-fail
-    failGlovesPopup: fingerprint-reader-fail-gloves
   - type: Delivery
   - type: DeliveryRandomMultiplier
   - type: ContainerContainer
@@ -102,7 +100,9 @@
     speechVerb: Robotic
   - type: SimpleToolUsage
     doAfter: 6
-
+  - type: Tag
+    tags:
+      - PackageDelivery
 
 - type: entity
   parent: BaseDelivery
@@ -178,6 +178,7 @@
     table: !type:NestedSelector
       tableId: BrokenFragileDelivery
   - type: Damageable
+  - type: Injurable
     damageContainer: Inorganic
   - type: DamageOnHighSpeedImpact
     minimumSpeed: 0.1

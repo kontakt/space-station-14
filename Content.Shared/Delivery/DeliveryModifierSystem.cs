@@ -19,15 +19,15 @@ namespace Content.Shared.Delivery;
 /// </summary>
 public sealed partial class DeliveryModifierSystem : EntitySystem
 {
-    [Dependency] private readonly EntityTableSystem _entityTable = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly NameModifierSystem _nameModifier = default!;
-    [Dependency] private readonly SharedContainerSystem _container = default!;
-    [Dependency] private readonly SharedDeliverySystem _delivery = default!;
-    [Dependency] private readonly SharedExplosionSystem _explosion = default!;
-    [Dependency] private readonly SharedAmbientSoundSystem _ambientSound = default!;
+    [Dependency] private EntityTableSystem _entityTable = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private NameModifierSystem _nameModifier = default!;
+    [Dependency] private SharedContainerSystem _container = default!;
+    [Dependency] private SharedDeliverySystem _delivery = default!;
+    [Dependency] private SharedExplosionSystem _explosion = default!;
+    [Dependency] private SharedAmbientSoundSystem _ambientSound = default!;
 
     public override void Initialize()
     {
@@ -117,16 +117,6 @@ public sealed partial class DeliveryModifierSystem : EntitySystem
     {
         ent.Comp.Broken = true;
         _delivery.UpdateBrokenVisuals(ent, true);
-
-        var delivery_container = _container.GetAllContainers(ent).First(); // Assuming only one container in a delivery
-        _container.CleanContainer(delivery_container);
-
-        var spawns = _entityTable.GetSpawns(ent.Comp.Table);
-        foreach (var proto in spawns)
-        {
-            TrySpawnInContainer(proto, ent, delivery_container.ID, out var _);
-        }
-
         Dirty(ent);
     }
 
@@ -271,7 +261,7 @@ public sealed partial class DeliveryModifierSystem : EntitySystem
 }
 
 /// <summary>
-/// Gets raised on a priority delivery when its timer expires.
+/// Gets raised on a priority delivery when it's timer expires.
 /// </summary>
 [Serializable, NetSerializable]
 public readonly record struct DeliveryPriorityExpiredEvent;
